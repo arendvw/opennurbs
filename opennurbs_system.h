@@ -521,7 +521,9 @@ typedef ON__UINT32 wchar_t;
 
 #pragma ON_PRAGMA_WARNING_BEFORE_DIRTY_INCLUDE
 #if defined(ON_RUNTIME_ANDROID)
-#include "android_uuid/uuid.h"
+// Hack for linux. This should ideally be solved in macros.
+#include <uuid/uuid.h>
+// #include "android_uuid/uuid.h"
 #else
 #include <uuid/uuid.h>
 #endif
