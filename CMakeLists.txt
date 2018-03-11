@@ -32,7 +32,9 @@ if (NOT CMAKE_BUILD_TYPE)
     message(STATUS "Build type not specified: Use Release by default.")
 endif (NOT CMAKE_BUILD_TYPE)
 
+# We are compiling opennurbs
 SET(ON_COMPILE -DON_COMPILING_OPENNURBS)
+# These flags will be applied to all opennurbs (lib and examples)
 SET(ON_GENERAL)
 
 ############## Artefacts Output #################
@@ -54,11 +56,14 @@ endif ()
 ########################################
 
 if (MSVC)
+    # Flags for visual studio compiler. Not tested at all.
     set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MD /Od /EHsc")
     set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /GL /Od /Oi /Gy /EHsc")
 endif (MSVC)
 if (NOT MSVC)
     if (UNIX AND NOT APPLE)
+        # Tested on linux.
+        # Use the on_runtime_android flags.
         SET(ON_GENERAL "${ON_GENERAL}ON_RUNTIME_ANDROID")
         include(TestBigEndian)
         TEST_BIG_ENDIAN(IS_BIG_ENDIAN)
@@ -69,45 +74,34 @@ if (NOT MSVC)
         endif ()
     endif ()
     set(CMAKE_C_FLAGS_INIT "-Wall -std=c11")
+        # Ignore uknown pargma, unused private field, missing all catches, and no-overloaded-virtual compile errors.
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -std=c++14 -Wno-unknown-pragmas -Wno-unused-private-field -Wno-switch -Wno-overloaded-virtual")
     if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+        # include stdlib
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++")
     endif ()
 endif (NOT MSVC)
 
 if (CMAKE_SIZEOF_VOID_P EQUAL 8)
+    # tested on linux.
     SET(ON_GENERAL "${ON_GENERAL} -DON_64BIT_RUNTIME")
 elseif (CMAKE_SIZEOF_VOID_P EQUAL 4)
-    SET(ON_GENERAL "${ON_GENERAL} -DON_64BIT_RUNTIME")
+    # Not tested. Also not supported by mcneel
+    SET(ON_GENERAL "${ON_GENERAL} -DON_32BIT_RUNTIME")
 endif ()
 
 # using pkg-config to configure uuid
+# when compiling for clang under linux, the pthreads package is required. (apt install pth
 find_package(PkgConfig REQUIRED)
 find_package(Threads REQUIRED)
-
+# Use the system provided uuid lib
 pkg_search_module(UUID REQUIRED uuid)
 
-message(" hoi ${GCC_COVERAGE_LINK_FLAGS}")
+# make mcneel provided zlib package
 include(cmake/packages/zlib.cmake)
+# make mcneel provided freetype package
 include(cmake/packages/freetype.cmake)
+# make opennurbs library
 include(cmake/packages/opennurbs.cmake)
+# build all examples
 include(cmake/packages/examples.cmake)
-
-
-# add_executable(example_read/example_read.ccp examples.h example_userdata/example_ud.h)
-
-# EXAMPLES = example_read/example_read \
-#       example_write/example_write \
-#       example_convert/example_convert \
-#       example_brep/example_brep \
-#       example_roundtrip/example_roundtrip \
-#       example_userdata/example_userdata
-
-
-#add_library(${PROJECT_NAME} STATIC
-#        ${FREETYPE_INC}
-#        ${FREETYPE_SRC}
-#        ${HEADERS}
-#        ${SOURCE}
-#        )
-
