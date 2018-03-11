@@ -309,6 +309,7 @@ set(ON_SRC
         opennurbs_topology.cpp
         opennurbs_torus.cpp
         opennurbs_unicode.cpp
+        opennurbs_unicode_cpsb.cpp
         opennurbs_units.cpp
         opennurbs_userdata.cpp
         opennurbs_userdata_obsolete.cpp
