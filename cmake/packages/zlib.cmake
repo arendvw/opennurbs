@@ -1,8 +1,8 @@
-file(GLOB ZLIB_SRC ../zlib/*.c)
-file(GLOB ZLIB_INC ../zlib/*.h)
+file(GLOB ZLIB_SRC ${CMAKE_CURRENT_SOURCE_DIR}/zlib/*.c)
+file(GLOB ZLIB_INC ${CMAKE_CURRENT_SOURCE_DIR}/zlib/*.h)
 #-DMY_ZCALLOC -DZ_PREFIX
 # Add library to build.cd
-if(${BUILD_SHARED_LIBS})
+if(${ON_BUILD_SHARED_LIBS})
     add_library(zlib SHARED
             ${ZLIB_SRC}
             ${ZLIB_INC}

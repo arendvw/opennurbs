@@ -324,7 +324,7 @@ set(ON_SRC
         opennurbs_zlib_memory.cpp
         )
 
-if(${BUILD_SHARED_LIBS})
+if(${ON_BUILD_SHARED_LIBS})
     add_library(opennurbs SHARED ${ON_SRC} ${ON_HEADERS})
     target_link_libraries(opennurbs zlib freetype)
 else()

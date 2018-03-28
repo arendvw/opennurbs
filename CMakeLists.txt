@@ -3,10 +3,15 @@ cmake_minimum_required(VERSION 3.0.0 FATAL_ERROR)
 ################### Variables. ####################
 # Change if you want modify path or other values. #
 ###################################################
-
 set(PROJECT_NAME opennurbs_lib)
 # Build as shared, or as static
-set(BUILD_SHARED_LIBS ON)
+if (NOT DEFINED ON_BUILD_SHARED_LIBS)
+    set(ON_BUILD_SHARED_LIBS ON)
+endif()
+
+if (NOT DEFINED ON_BUILD_EXAMPLES)
+    set(ON_BUILD_EXAMPLES ON)
+endif()
 
 # Output Variables
 set(OUTPUT_DEBUG Build/Debug/bin)
@@ -49,7 +54,7 @@ else ()
     set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${OUTPUT_REL}")
     set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${OUTPUT_REL}")
     set(CMAKE_EXECUTABLE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${OUTPUT_REL}")
-endif ()
+endif (CMAKE_BUILD_TYPE STREQUAL "Debug")
 
 ################# Flags ################
 # Defines Flags for Windows and Linux. #
@@ -79,6 +84,8 @@ if (NOT MSVC)
     if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
         # include stdlib
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++")
+    else ()
+        message("NOT USING CLANG but ${CMAKE_CXX_COMPILER_ID}")
     endif ()
 endif (NOT MSVC)
 
@@ -97,11 +104,16 @@ find_package(Threads REQUIRED)
 # Use the system provided uuid lib
 pkg_search_module(UUID REQUIRED uuid)
 
+
+message("Current shared libs ${BUILD_SHARED_LIBS}")
 # make mcneel provided zlib package
 include(cmake/packages/zlib.cmake)
 # make mcneel provided freetype package
 include(cmake/packages/freetype.cmake)
 # make opennurbs library
 include(cmake/packages/opennurbs.cmake)
-# build all examples
-include(cmake/packages/examples.cmake)
+
+if (ON_BUILD_EXAMPLES)
+    # build all examples
+    include(cmake/packages/examples.cmake)
+endif(ON_BUILD_EXAMPLES)
