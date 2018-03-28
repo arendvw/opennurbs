@@ -1,3 +1,34 @@
+This version of opennurbs is obtained from mcneel, and patched to compile under linux, using the clang compiler.
+The old makefile has been ported to CMake.
+
+For debian, the clang and clang++ packages need to be installed. Compiling using gnu has not been successful.
+
+Todo: List required packages for deb* based distributions, and list libraries
+sudo apt-get install clang
+sudo update-alternatives --config c++
+sudo update-alternatives --config cc
+
+
+Building the library can be done with these commands:
+Shared libraries:
+
+cmake .
+make
+
+Building the static libraries can be done with:
+
+cmake . -DBUILD_SHARED_LIBS=off
+make
+
+The compiled opennurbs library will be libopennurbs.so
+
+
+Changes to the main mcneel version:
+- included system uuid (hack)
+- Added cmake instead of makefile
+- compiling using the following flags:
+- ON_RUNTIME_ANDROID ON_LITTLE_ENDIAN
+
 More Information:
   Please see 
 

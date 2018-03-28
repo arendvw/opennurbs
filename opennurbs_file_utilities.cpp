@@ -43,6 +43,11 @@
 #endif
 #endif
 
+#if defined(ON_RUNTIME_ANDROID)
+#include <stdio.h>
+#include <unistd.h>
+#endif
+
 ///////////////////////////////////////////////////////////////////////////////
 
 void ON_String::SplitPath(
@@ -564,11 +569,14 @@ const ON_wString ON_FileSystemPath::CurrentDirectory(
   ON_ERROR("ON_FileSystemPath::CurrentDirectory() not implemented.");
   return ON_wString::EmptyString;   
 
-#else
-
+#elif defined(ON_RUNTIME_ANDROID)
+  char buff[FILENAME_MAX];
+  getcwd( buff, FILENAME_MAX );
   // unsupported OS
+  return ON_wString(buff);
+#else
   ON_ERROR("ON_FileSystemPath::CurrentDirectory() not implemented.");
-  return ON_wString::EmptyString;   
+  return ON_wString::EmptyString;
 #endif
 }
 
